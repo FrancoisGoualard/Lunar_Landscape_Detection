@@ -14,6 +14,8 @@ from keras.optimizers import Adam
 from keras import backend as K
 
 from content.modelEnhancer import ModelEnhancer
+from config import DATAPATH, KERASPATH, HERE
+
 
 np.random.seed(123)
 tf.set_random_seed(123)
@@ -23,7 +25,7 @@ K.set_session(sess)
 
 
 def parsing():
-    InputPath = os.getenv("DATAPATH")
+    InputPath = DATAPATH
 
     SourceImg = sorted(os.listdir(InputPath + 'images/render'))
     TargetImg = sorted(os.listdir(InputPath + 'images/ground'))
@@ -67,7 +69,7 @@ def GenerateInputs(X,y):
 
 
 def prediction_test(TransferLearningModel):
-    img_x = cv.imread(os.getenv("DATAPATH") + "images/render/render0001.png")
+    img_x = cv.imread(DATAPATH + "images/render/render0001.png")
     img_x = cv.cvtColor(img_x, cv.COLOR_BGR2RGB)
     img_x = cv.resize(img_x, (500, 500))
     img_x = img_x.reshape(1, 500, 500, 3)
@@ -81,7 +83,7 @@ def prediction_test(TransferLearningModel):
 def main_process():
     X_, Y_ = parsing()
     input_shape = (500, 500, 3)
-    VGG16_weight = f"{os.getenv('KERASPATH')}vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5"
+    VGG16_weight = f"{KERASPATH}vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5"
     VGG16 = vgg16.VGG16(include_top=False, weights=VGG16_weight, input_shape=input_shape)
     Model_ = ModelEnhancer(VGG16)
     plot_layers(Model_)
@@ -89,5 +91,5 @@ def main_process():
     checkpointer = ModelCheckpoint(f'{os.getenv("HERE")}model_TL_UNET.h5', verbose=1, mode='auto', monitor='loss', save_best_only=True)
     Model_.fit_generator(GenerateInputs(X_, Y_), epochs=433, verbose=1, callbacks=[checkpointer],
                          steps_per_epoch=5, shuffle=True)
-    TransferLearningModel = load_model(f'{os.getenv("HERE")}model_TL_UNET.h5')
+    TransferLearningModel = load_model(f'{"HERE"}model_TL_UNET.h5')
     prediction_test(TransferLearningModel)

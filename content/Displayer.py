@@ -4,10 +4,10 @@ import numpy
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 from PIL import Image
-
+from config import DATAPATH, KERASPATH, HERE
 
 class Displayer:
-    project_dir = os.getenv("DATAPATH")
+    project_dir = DATAPATH
 
     def __init__(self, bounding_boxes=[], fileNumber=""):
         self.bounding_boxes_list = bounding_boxes
