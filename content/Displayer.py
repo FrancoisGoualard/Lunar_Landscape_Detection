@@ -1,4 +1,3 @@
-import os
 import csv
 import numpy
 import matplotlib.patches as patches

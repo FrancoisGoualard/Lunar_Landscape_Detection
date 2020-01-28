@@ -56,7 +56,7 @@ def parsing():
 
 def plot_layers(Model_):
     Model_.summary()
-    path_file = os.getenv("HERE") + "model_.png"  # TODO : a changer avec os
+    path_file = HERE + "model_.png"  # TODO : a changer avec os
     plot_model(Model_, to_file=path_file, show_shapes=True, show_layer_names=True)
     Image(retina=True, filename='model_.png')
 
