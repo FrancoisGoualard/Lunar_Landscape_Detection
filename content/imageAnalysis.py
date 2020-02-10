@@ -83,6 +83,8 @@ def prediction_test(TransferLearningModel):
 def main_process():
     X_, Y_ = parsing()
     input_shape = (500, 500, 3)
+    tf.test.is_gpu_available( cuda_only=True,
+    min_cuda_compute_capability=None)
     VGG16_weight = f"{KERASPATH}vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5"
     VGG16 = vgg16.VGG16(include_top=False, weights=VGG16_weight, input_shape=input_shape)
     Model_ = ModelEnhancer(VGG16)

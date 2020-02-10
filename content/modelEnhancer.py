@@ -1,5 +1,6 @@
-from keras.layers import Conv2D, Conv2DTranspose,  LeakyReLU, concatenate, BatchNormalization
+from keras.layers import Conv2D, Conv2DTranspose, LeakyReLU, concatenate, BatchNormalization
 from keras.models import Model
+
 
 def ModelEnhancer(VGG16):
     set_trainable = False
@@ -8,7 +9,7 @@ def ModelEnhancer(VGG16):
             set_trainable = True
         if layer.name in ['block1_pool', 'block2_pool', 'block3_pool', 'block4_pool', 'block5_pool']:
             layer.trainable = False
-    if set_trainable == False:
+    if not set_trainable:
         print("ERROR")  # TODO : Handle errors
 
     model_ = Conv2DTranspose(256, (3, 3), strides=(2, 2))(VGG16.output)
