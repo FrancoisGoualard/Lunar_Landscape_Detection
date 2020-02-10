@@ -6,10 +6,10 @@
 #PBS -o output.txt
 #PBS -e error.txt
 #PBS -j oe 
-#PBS -l walltime=01:00:00
+#PBS -l walltime=23:00:00
 #PBS -M domitille.prevost@gmail.com
 #PBS -m abe 
-#PBS -l select=1:ncpus=24
+#PBS -l select=1:ncpus=24:ngpus=1
 #PBS -q gpuq
 
 cd $PBS_O_WORKDIR
