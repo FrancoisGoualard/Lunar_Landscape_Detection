@@ -26,9 +26,10 @@ K.set_session(sess)
 
 def parsing():
     InputPath = DATAPATH
+    dataset_path = os.path.join(DATAPATH, "images", "dataset")
 
-    SourceImg = sorted(os.listdir(InputPath + 'images/render'))
-    TargetImg = sorted(os.listdir(InputPath + 'images/ground'))
+    SourceImg = sorted(os.listdir(dataset_path + 'render'))
+    TargetImg = sorted(os.listdir(dataset_path + 'ground'))
     X_ = []
     y_ = []
     count = 0
