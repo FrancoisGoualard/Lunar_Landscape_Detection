@@ -3,7 +3,8 @@ import numpy
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 from PIL import Image
-from config import DATAPATH, KERASPATH, HERE
+from config import DATAPATH
+
 
 class Displayer:
     project_dir = DATAPATH
@@ -12,7 +13,7 @@ class Displayer:
         self.bounding_boxes_list = bounding_boxes
         self.file = fileNumber
 
-    def get_bounding_boxes(self, file):
+    def __get_bounding_boxes(self, file):
         with open(f"{self.project_dir}bounding_boxes.csv") as bounding_boxes_csv:
             reader = csv.reader(bounding_boxes_csv, delimiter=',')
             next(bounding_boxes_csv)  # Skip the header
@@ -44,11 +45,10 @@ class Displayer:
     def clean(self):
         plt.close('all')
 
-
     def run_without_image(self):
         self.file = input('Number of the image? -- or EXIT : \n')
         while self.file != "EXIT":
-            self.get_bounding_boxes(self.file)
+            self.__get_bounding_boxes(self.file)
             zeros = '0' * (4 - len(self.file))
             image = f"{self.project_dir}images/ground/ground{zeros}{self.file}.png"
             self.display_image_and_boxes(image, f"image number {self.file}")

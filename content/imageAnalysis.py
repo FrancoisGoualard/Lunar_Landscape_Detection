@@ -25,25 +25,23 @@ K.set_session(sess)
 
 
 def parsing():
-    InputPath = DATAPATH
 
-    SourceImg = sorted(os.listdir(InputPath + 'images/render'))
-    TargetImg = sorted(os.listdir(InputPath + 'images/ground'))
+    SourceImg = sorted(os.listdir(DATAPATH + 'images/render'))
+    TargetImg = sorted(os.listdir(DATAPATH + 'images/ground'))
     X_ = []
     y_ = []
     count = 0
     for i in range(len(SourceImg)):
-        if count < 2165:
-            count = count + 1
-            # print(InputPath + 'images/render/' + SourceImg[i])
-            img_1 = cv.imread(InputPath + 'images/render/' + SourceImg[i])
-            disp = Displayer([], "")
+        # if count < 2165:
+        #     count = count + 1
+            img_1 = cv.imread(DATAPATH + 'images/render/' + SourceImg[i])
+            # disp = Displayer([], "")
             # disp.display_image_and_boxes(InputPath + 'images/render/' + SourceImg[i])
             img_1 = cv.cvtColor(img_1, cv.COLOR_BGR2RGB)
             img_1 = cv.resize(img_1, (500, 500))
             X_.append(img_1)
             # disp.display_image(img_1, f"image_1 {count}")
-            img_2 = cv.imread(InputPath + 'images/ground/' + TargetImg[i])
+            img_2 = cv.imread(DATAPATH + 'images/ground/' + TargetImg[i])
             img_2 = cv.cvtColor(img_2, cv.COLOR_BGR2RGB)
             img_2 = cv.resize(img_2, (500, 500))
             # disp.display_image(img_2, f"image_2 {count}")
@@ -68,8 +66,11 @@ def GenerateInputs(X,y):
         yield (X_input,y_input)
 
 
-def prediction_test(TransferLearningModel):
-    img_x = cv.imread(DATAPATH + "images/render/render0001.png")
+def prediction_test(TransferLearningModel, im_number):
+    if im_number < 0:
+        return
+    SourceImg = sorted(os.listdir(DATAPATH + 'images/render'))
+    img_x = cv.imread(DATAPATH + "images/render/" + SourceImg[int(im_number) - 1])
     img_x = cv.cvtColor(img_x, cv.COLOR_BGR2RGB)
     img_x = cv.resize(img_x, (500, 500))
     img_x = img_x.reshape(1, 500, 500, 3)
@@ -94,4 +95,4 @@ def main_process():
     Model_.fit_generator(GenerateInputs(X_, Y_), epochs=433, verbose=1, callbacks=[checkpointer],
                          steps_per_epoch=5, shuffle=True)
     TransferLearningModel = load_model(f'{HERE}model_TL_UNET.h5')
-    prediction_test(TransferLearningModel)
+    prediction_test(TransferLearningModel, 1)
