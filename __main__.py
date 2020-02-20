@@ -6,6 +6,7 @@ from content.Displayer import Displayer
 from content.imageAnalysis import main_process, prediction_test, load_model
 from config import OUTPUT
 
+
 def main():
     if len(sys.argv) == 1:
         return main_process()
@@ -21,6 +22,7 @@ def main():
                 prediction_test(TransferLearningModel, sys.argv[2])
             except:
                 print(f"Error : please generate the weights first. {OUTPUT}model_TL_UNET.h5 not found")
+
 
 if __name__ == "__main__":
     main()

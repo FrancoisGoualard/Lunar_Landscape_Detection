@@ -3,7 +3,6 @@ import cv2 as cv
 import numpy as np
 import tensorflow as tf
 from pathlib import Path
-from content.Displayer import Displayer
 from tensorflow.keras.utils import plot_model
 from IPython.display import Image
 import matplotlib.pyplot as plt
@@ -18,11 +17,11 @@ from content.modelEnhancer import ModelEnhancer
 from config import DATAPATH, KERASPATH, OUTPUT
 
 
-np.random.seed(123)
-tf.set_random_seed(123)
-session_conf = tf.ConfigProto(intra_op_parallelism_threads=1, inter_op_parallelism_threads=1)
-sess = tf.Session(graph=tf.get_default_graph(), config=session_conf)
-K.set_session(sess)
+# np.random.seed(123)
+# tf.set_random_seed(123)
+# session_conf = tf.ConfigProto(intra_op_parallelism_threads=1, inter_op_parallelism_threads=1)
+# sess = tf.Session(graph=tf.get_default_graph(), config=session_conf)
+# K.set_session(sess)
 
 
 def parsing():
@@ -119,7 +118,7 @@ def main_process():
     model_.compile(optimizer=Adam(lr=1e-4), loss='binary_crossentropy', metrics=['accuracy'])
     checkpointer = ModelCheckpoint(f'{OUTPUT}model_TL_UNET.h5', verbose=1, mode='auto', monitor='loss', save_best_only=True)
 
-    model_.fit_generator(load_images(), epochs=433, verbose=1, callbacks=[checkpointer],
+    model_.fit(load_images(), epochs=433, verbose=1, callbacks=[checkpointer],
                          steps_per_epoch=5, shuffle=True) # TODO Change epoch to hyperparameter constant
     transferLearningModel = load_model(f'{OUTPUT}model_TL_UNET.h5')
     prediction_test(transferLearningModel, 1)
