@@ -1,5 +1,5 @@
-from keras.layers import Conv2D, Conv2DTranspose, LeakyReLU, concatenate, BatchNormalization
-from keras.models import Model
+from tensorflow.keras.layers import Conv2D, Conv2DTranspose, LeakyReLU, concatenate, BatchNormalization
+from tensorflow.keras.models import Model
 
 
 def ModelEnhancer(VGG16):
