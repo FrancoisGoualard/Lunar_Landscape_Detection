@@ -18,30 +18,33 @@ def create_dataset():
     path_data_augmentation_render = os.path.join(path_data_augmentation, "render")
     path_data_augmentation_ground = os.path.join(path_data_augmentation, "ground")
 
-    os.mkdir(path_dataset)
-    os.mkdir(path_dataset_render)
-    os.mkdir(path_dataset_ground)
+    if not os.path.dir(path_dataset):
+        os.mkdir(path_dataset)
+        os.mkdir(path_dataset_render)
+        os.mkdir(path_dataset_ground)
 
-    print("creating dataset ...")
-    for f in tqdm.tqdm([f for f in os.listdir(path_data_render) if os.path.isfile(os.path.join(path_data_render, f))]):
-        path_origin = os.path.join(path_data_render, f)
-        path_target = os.path.join(path_dataset_render, f)
-        shutil.copyfile(path_origin, path_target)
+        print("creating dataset ...")
+        for f in tqdm.tqdm([f for f in os.listdir(path_data_render) if os.path.isfile(os.path.join(path_data_render, f))]):
+            path_origin = os.path.join(path_data_render, f)
+            path_target = os.path.join(path_dataset_render, f)
+            shutil.copyfile(path_origin, path_target)
 
-    for f in tqdm.tqdm([f for f in os.listdir(path_data_ground) if os.path.isfile(os.path.join(path_data_ground, f))]):
-        path_origin = os.path.join(path_data_ground, f)
-        path_target = os.path.join(path_dataset_ground, f)
-        shutil.copyfile(path_origin, path_target)
+        for f in tqdm.tqdm([f for f in os.listdir(path_data_ground) if os.path.isfile(os.path.join(path_data_ground, f))]):
+            path_origin = os.path.join(path_data_ground, f)
+            path_target = os.path.join(path_dataset_ground, f)
+            shutil.copyfile(path_origin, path_target)
 
-    for f in tqdm.tqdm([f for f in os.listdir(path_data_augmentation_ground) if os.path.isfile(os.path.join(path_data_augmentation_ground, f))]):
-        path_origin = os.path.join(path_data_augmentation_ground, f)
-        path_target = os.path.join(path_dataset_ground, f)
-        os.rename(path_origin, path_target)
+        for f in tqdm.tqdm([f for f in os.listdir(path_data_augmentation_ground) if os.path.isfile(os.path.join(path_data_augmentation_ground, f))]):
+            path_origin = os.path.join(path_data_augmentation_ground, f)
+            path_target = os.path.join(path_dataset_ground, f)
+            os.rename(path_origin, path_target)
 
-    for f in tqdm.tqdm([f for f in os.listdir(path_data_augmentation_render) if os.path.isfile(os.path.join(path_data_augmentation_render, f))]):
-        path_origin = os.path.join(path_data_augmentation_render, f)
-        path_target = os.path.join(path_dataset_render, f)
-        os.rename(path_origin, path_target)
+        for f in tqdm.tqdm([f for f in os.listdir(path_data_augmentation_render) if os.path.isfile(os.path.join(path_data_augmentation_render, f))]):
+            path_origin = os.path.join(path_data_augmentation_render, f)
+            path_target = os.path.join(path_dataset_render, f)
+            os.rename(path_origin, path_target)
+    else:
+        print("dataset already created")
 
 
 if __name__ == "__main__":
