@@ -54,9 +54,9 @@ def parsing():
 
 def plot_layers(Model_):
     Model_.summary()
-    path_file = HERE + "model_.png"  # TODO : a changer avec os
+    path_file = HERE + "output/model_.png"  # TODO : a changer avec os
     plot_model(Model_, to_file=path_file, show_shapes=True, show_layer_names=True)
-    Image(retina=True, filename=HERE + "model_.png")
+    Image(retina=True, filename=HERE + "output/model_.png")
 
 
 def GenerateInputs(X,y):
@@ -91,8 +91,8 @@ def main_process():
     Model_ = ModelEnhancer(VGG16)
     plot_layers(Model_)
     Model_.compile(optimizer=Adam(lr=1e-4), loss='binary_crossentropy', metrics=['accuracy'])
-    checkpointer = ModelCheckpoint(f'{HERE}model_TL_UNET.h5', verbose=1, mode='auto', monitor='loss', save_best_only=True)
+    checkpointer = ModelCheckpoint(f'{HERE}output/model_TL_UNET.h5', verbose=1, mode='auto', monitor='loss', save_best_only=True)
     Model_.fit_generator(GenerateInputs(X_, Y_), epochs=433, verbose=1, callbacks=[checkpointer],
                          steps_per_epoch=5, shuffle=True)
-    TransferLearningModel = load_model(f'{HERE}model_TL_UNET.h5')
+    TransferLearningModel = load_model(f'{HERE}output/model_TL_UNET.h5')
     prediction_test(TransferLearningModel, 1)
