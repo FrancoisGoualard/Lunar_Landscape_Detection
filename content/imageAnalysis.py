@@ -12,6 +12,7 @@ from keras.models import load_model
 from keras.callbacks import ModelCheckpoint
 from keras.optimizers import Adam
 from keras import backend as K
+from create_dataset import create_dataset
 
 from content.modelEnhancer import ModelEnhancer
 from config import DATAPATH, KERASPATH, HERE
@@ -26,6 +27,7 @@ K.set_session(sess)
 
 def parsing():
     InputPath = DATAPATH
+    create_dataset()
     dataset_path = os.path.join(DATAPATH, "images", "dataset")
 
     SourceImg = sorted(os.listdir(dataset_path + 'render'))
