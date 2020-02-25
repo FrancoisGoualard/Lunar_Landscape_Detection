@@ -76,6 +76,7 @@ target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
+.ipynb_checkpoints/
 
 # IPython
 profile_default/
@@ -130,3 +131,9 @@ dmypy.json
 
 #config
 config.py
+
+#vscode
+.vscode
+
+#data folder
+data/
