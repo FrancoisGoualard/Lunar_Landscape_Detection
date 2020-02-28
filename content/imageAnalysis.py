@@ -1,7 +1,6 @@
 import os
 import cv2 as cv
-import numpy as np
-import tensorflow as tf
+
 from pathlib import Path
 from tensorflow.keras.utils import plot_model
 from IPython.display import Image
@@ -10,18 +9,10 @@ import matplotlib.pyplot as plt
 from tensorflow.keras.models import load_model
 from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras import backend as K
 from tensorflow.keras.applications import VGG16
 
 from content.modelEnhancer import ModelEnhancer
-from config import DATAPATH, KERASPATH, OUTPUT
-
-
-# np.random.seed(123)
-# tf.set_random_seed(123)
-# session_conf = tf.ConfigProto(intra_op_parallelism_threads=1, inter_op_parallelism_threads=1)
-# sess = tf.Session(graph=tf.get_default_graph(), config=session_conf)
-# K.set_session(sess)
+from config import DATAPATH, KERASPATH, OUTPUT, GPU
 
 
 def parsing():
@@ -39,7 +30,7 @@ def parsing():
     print(os.getcwd())
     len_render = len(os.listdir(DATAPATH + "images_cleaned/render/"))
     len_ground = len(os.listdir(DATAPATH + "images_cleaned/ground/"))
-    if len_render > 200 & (len_render == len_ground):
+    if len_render > 200 & (len_render == len_ground) and GPU == 0:
         answer = input('Do you want to recreate the reshaped images directory? Answer with YES or NO and press enter \n')
         if answer != "YES":
             return
@@ -86,7 +77,7 @@ def plot_layers(Model_):
 
 
 def prediction_test(TransferLearningModel, im_number):
-    if im_number < 0:
+    if int(im_number) < 0:
         return
     SourceImg = sorted(os.listdir(DATAPATH + 'images/render'))
     img_x = cv.imread(DATAPATH + "images/render/" + SourceImg[int(im_number) - 1])
@@ -98,6 +89,7 @@ def prediction_test(TransferLearningModel, im_number):
     pred_ = cv.resize(pred, (700, 450))
     plt.imshow(pred_)
     plt.show()
+    return
 
 
 def main_process():
