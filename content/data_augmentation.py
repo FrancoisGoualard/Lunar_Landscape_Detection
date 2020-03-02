@@ -8,15 +8,20 @@ import shutil
 
 def data_augmentation():
     path = os.path.join(DATAPATH, "images")
-    path_data_augmentation = os.path.join(path, "data_augmentation")
-    # if os.path.isdir(path_data_augmentation):
-    #     print("Data augmentation already done")
-    #     return
-
     path_render = os.path.join(path, "render")
     path_ground = os.path.join(path, "ground")
+    path_data_augmentation = os.path.join(path, "data_augmentation")
     path_data_augmentation_render = os.path.join(path_data_augmentation, "render")
     path_data_augmentation_ground = os.path.join(path_data_augmentation, "ground")
+
+
+    if os.path.isdir(path_data_augmentation_render) & \
+        os.path.isdir(path_data_augmentation_ground) & \
+            (len(os.listdir(path_data_augmentation_render)) == len(os.listdir(path))) &\
+            (len(os.listdir(path_data_augmentation_ground)) == len(os.listdir(path))):
+        print("Data augmentation already done")
+        return
+
 
     files_render = [f for f in os.listdir(path_render) if os.path.isfile(os.path.join(path_render, f))]
     files_ground = [f for f in os.listdir(path_ground) if os.path.isfile(os.path.join(path_ground, f))]
