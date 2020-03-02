@@ -18,7 +18,7 @@ def create_dataset():
     path_data_augmentation_render = os.path.join(path_data_augmentation, "render")
     path_data_augmentation_ground = os.path.join(path_data_augmentation, "ground")
 
-    if not os.path.dir(path_dataset):
+    if not os.path.isdir(path_dataset):
         os.mkdir(path_dataset)
         os.mkdir(path_dataset_render)
         os.mkdir(path_dataset_ground)

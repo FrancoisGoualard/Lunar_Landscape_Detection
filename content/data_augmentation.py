@@ -3,14 +3,15 @@ import os
 import imgaug as ia
 import cv2
 import tqdm
+import shutil
 
 
 def data_augmentation():
     path = os.path.join(DATAPATH, "images")
     path_data_augmentation = os.path.join(path, "data_augmentation")
-    if os.path.isdir(path_data_augmentation):
-        print("Data augmentation already done")
-        return
+    # if os.path.isdir(path_data_augmentation):
+    #     print("Data augmentation already done")
+    #     return
 
     path_render = os.path.join(path, "render")
     path_ground = os.path.join(path, "ground")
@@ -20,8 +21,11 @@ def data_augmentation():
     files_render = [f for f in os.listdir(path_render) if os.path.isfile(os.path.join(path_render, f))]
     files_ground = [f for f in os.listdir(path_ground) if os.path.isfile(os.path.join(path_ground, f))]
 
+    shutil.rmtree(path_data_augmentation, ignore_errors=True)
     os.mkdir(path_data_augmentation)
+    shutil.rmtree(path_data_augmentation_ground, ignore_errors=True)
     os.mkdir(path_data_augmentation_ground)
+    shutil.rmtree(path_data_augmentation_render, ignore_errors=True)
     os.mkdir(path_data_augmentation_render)
 
     print("creation of new data ...")

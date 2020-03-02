@@ -60,12 +60,14 @@ def parsing():
     shutil.rmtree(DATAPATH + "images_cleaned/ground/")
     Path(DATAPATH + "images_cleaned/ground/").mkdir(parents=True, exist_ok=True)
 
-    SourceImg = sorted(os.listdir(TARGETIMG))
-    TargetImg = sorted(os.listdir(SOURCEIMG))
+    SourceImg = sorted(os.listdir(SOURCEIMG))
+    TargetImg = sorted(os.listdir(TARGETIMG))
 
+    print(len(TargetImg))
+    print(len(SourceImg))
     for i in range(len(SourceImg)):
-        cv.imwrite(f"{DATAPATH}images_cleaned/render/img_{i}.png", treat_img(TARGETIMG + SourceImg[i]))
-        cv.imwrite(f"{DATAPATH}/images_cleaned/ground/img_{i}.png", treat_img(SOURCEIMG + TargetImg[i]))
+        cv.imwrite(f"{DATAPATH}images_cleaned/render/" + SourceImg[i], treat_img(SOURCEIMG + SourceImg[i]))
+        cv.imwrite(f"{DATAPATH}/images_cleaned/ground/" + TargetImg[i], treat_img(TARGETIMG + TargetImg[i]))
 
 
 def load_images():
@@ -108,4 +110,3 @@ def main_process():
 
     model_.fit(load_images(), epochs=NB_EPOCH, verbose=1, callbacks=[checkpointer],
                steps_per_epoch=5, shuffle=True)  # TODO Change epoch to hyperparameter constant
-    transferLearningModel = load_model(f'{OUTPUT}model_TL_UNET.h5')
