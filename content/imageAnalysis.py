@@ -6,7 +6,6 @@ from pathlib import Path
 from tensorflow.keras.utils import plot_model
 from IPython.display import Image
 
-from tensorflow.keras.models import load_model
 from tensorflow.keras.callbacks import ModelCheckpoint
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.applications import VGG16
@@ -21,7 +20,6 @@ def treat_img(img_path):
     img = cv.imread(img_path)
     img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
     img = cv.resize(img, (500, 500))
-    img = img.reshape(1, 500, 500, 3)
     return img
 
 
@@ -41,12 +39,13 @@ def parsing():
 
      """
 
-    '''Here we will not run this function if it has already run'''
+    #  Here we will not run this function if it has already run
     nb_img = len(os.listdir(TARGETIMG))
     nb_render_img = scan_existing_folders(DATAPATH + "images_cleaned/render/")
     nb_ground_img = scan_existing_folders(DATAPATH + "images_cleaned/ground/")
 
-    if nb_ground_img == nb_img and nb_render_img == nb_img:
+    if nb_ground_img == nb_render_img & nb_img <= nb_ground_img:  # == if data augmentation, else <
+        print(nb_img)
         if GPU == 1:  # if we are remote we automatically don't recreate the dataset
             return
         answer = input(
@@ -55,16 +54,15 @@ def parsing():
             return
 
     # recreate empty folders to write in
-    shutil.rmtree(DATAPATH + "images_cleaned/render/")
+    shutil.rmtree(DATAPATH + "images_cleaned/", ignore_errors=True)
+
+    Path(DATAPATH + "images_cleaned/").mkdir(parents=True, exist_ok=True)
     Path(DATAPATH + "images_cleaned/render/").mkdir(parents=True, exist_ok=True)
-    shutil.rmtree(DATAPATH + "images_cleaned/ground/")
     Path(DATAPATH + "images_cleaned/ground/").mkdir(parents=True, exist_ok=True)
 
     SourceImg = sorted(os.listdir(SOURCEIMG))
     TargetImg = sorted(os.listdir(TARGETIMG))
 
-    print(len(TargetImg))
-    print(len(SourceImg))
     for i in range(len(SourceImg)):
         cv.imwrite(f"{DATAPATH}images_cleaned/render/" + SourceImg[i], treat_img(SOURCEIMG + SourceImg[i]))
         cv.imwrite(f"{DATAPATH}/images_cleaned/ground/" + TargetImg[i], treat_img(TARGETIMG + TargetImg[i]))
@@ -75,7 +73,9 @@ def load_images():
     TargetImg = sorted(os.listdir(DATAPATH + 'images_cleaned/ground'))
     for i in range(len(SourceImg)):
         img_1 = cv.imread(DATAPATH + 'images_cleaned/render/' + SourceImg[i])
+        img_1 = img_1.reshape(1, 500, 500, 3)
         img_2 = cv.imread(DATAPATH + 'images_cleaned/ground/' + TargetImg[i])
+        img_2 = img_2.reshape(1, 500, 500, 3)
         yield img_1, img_2
 
 
@@ -94,8 +94,10 @@ def main_process():
     """Train transfer learning model with given hyperparameters and test against a given image."""
 
     # should be called if we want to activate data augmentation
-    create_dataset()
-
+    try:
+        create_dataset()
+    except AssertionError as e:
+        print(repr(e))
     parsing()
     input_shape = (500, 500, 3)
 
