@@ -12,7 +12,8 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.applications import VGG16
 
 from content.modelEnhancer import ModelEnhancer
-from config import DATAPATH, KERASPATH, OUTPUT, GPU
+
+from config import DATAPATH, KERASPATH, OUTPUT, GPU, NB_EPOCH
 
 
 def parsing():
@@ -65,43 +66,26 @@ def load_images():
 
 
 def plot_layers(Model_):
-    """TO DO
-
-        Args:
-            model_ ([type]): [description]
+    """
+        Writes in a file named model_.png in the directory specified by the
+        global variable OUTPUT. It draws a scheme of the network given as argument.
         """
     Model_.summary()
-    path_file = OUTPUT + "model_.png"  # TODO : a changer avec os
+    path_file = OUTPUT + "model_.png"
     plot_model(Model_, to_file=path_file, show_shapes=True, show_layer_names=True)
     Image(retina=True, filename=OUTPUT + "model_.png")
 
-
-def prediction_test(TransferLearningModel, im_number):
-    if int(im_number) < 0:
-        return
-    SourceImg = sorted(os.listdir(DATAPATH + 'images/render'))
-    img_x = cv.imread(DATAPATH + "images/render/" + SourceImg[int(im_number) - 1])
-    img_x = cv.cvtColor(img_x, cv.COLOR_BGR2RGB)
-    img_x = cv.resize(img_x, (500, 500))
-    img_x = img_x.reshape(1, 500, 500, 3)
-    prediction = TransferLearningModel.predict(img_x)
-    pred = prediction.reshape(500, 500, 3)
-    pred_ = cv.resize(pred, (700, 450))
-    plt.imshow(pred_)
-    plt.show()
-    return
 
 
 def main_process():
     """Train transfer learning model with given hyperparameters and test against a given image."""
 
     parsing()
-    input_shape = (500, 500, 3)  # TODO Change to hyperparameter constant?
+    input_shape = (500, 500, 3)
     # print('GPU available? %s' % (len(tf.config.list_physical_devices(device_type='GPU')) > 0))
     # print('Build with CUDA? %s' % (tf.test.is_built_with_cuda()))
 
     VGG16_weight = f"{KERASPATH}vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5"
-    # TODO Update weights to reflect change to TF2
 
     VGG16_ = VGG16(include_top=False, weights=VGG16_weight, input_shape=input_shape)
     model_ = ModelEnhancer(VGG16_)
@@ -110,7 +94,6 @@ def main_process():
     model_.compile(optimizer=Adam(lr=1e-4), loss='binary_crossentropy', metrics=['accuracy'])
     checkpointer = ModelCheckpoint(f'{OUTPUT}model_TL_UNET.h5', verbose=1, mode='auto', monitor='loss', save_best_only=True)
 
-    model_.fit(load_images(), epochs=433, verbose=1, callbacks=[checkpointer],
+    model_.fit(load_images(), epochs=NB_EPOCH, verbose=1, callbacks=[checkpointer],
                          steps_per_epoch=5, shuffle=True) # TODO Change epoch to hyperparameter constant
     transferLearningModel = load_model(f'{OUTPUT}model_TL_UNET.h5')
-    prediction_test(transferLearningModel, 1)
