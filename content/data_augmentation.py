@@ -42,7 +42,7 @@ def data_augmentation_directory(name_directory):
         cv2.imwrite(os.path.join(path_data_augmentation_render, f[:-4] + "_flip.png"), flip_hr_image)
 
     if len(os.listdir(path_data_augmentation_render)) != len(os.listdir(path_render) * 3):
-        shutil.rmtree(path_data_augmentation_render)
+        shutil.rmtree(path_data_augmentation_render, ignore_errors=True)
         raise AssertionError(f"{name_directory} data augmentation failed")
 
 

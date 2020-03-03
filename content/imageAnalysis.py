@@ -1,6 +1,7 @@
 import os
 import cv2 as cv
 import shutil
+import tqdm
 
 from pathlib import Path
 from tensorflow.keras.utils import plot_model
@@ -63,7 +64,7 @@ def parsing():
     SourceImg = sorted(os.listdir(SOURCEIMG))
     TargetImg = sorted(os.listdir(TARGETIMG))
 
-    for i in range(len(SourceImg)):
+    for i in tqdm.tqdm(range(len(SourceImg))):
         cv.imwrite(f"{DATAPATH}images_cleaned/render/" + SourceImg[i], treat_img(SOURCEIMG + SourceImg[i]))
         cv.imwrite(f"{DATAPATH}/images_cleaned/ground/" + TargetImg[i], treat_img(TARGETIMG + TargetImg[i]))
 
@@ -71,7 +72,7 @@ def parsing():
 def load_images():
     SourceImg = sorted(os.listdir(DATAPATH + 'images_cleaned/render'))
     TargetImg = sorted(os.listdir(DATAPATH + 'images_cleaned/ground'))
-    for i in range(len(SourceImg)):
+    for i in tqdm.tqdm(len(SourceImg)):
         img_1 = cv.imread(DATAPATH + 'images_cleaned/render/' + SourceImg[i])
         img_1 = img_1.reshape(1, 500, 500, 3)
         img_2 = cv.imread(DATAPATH + 'images_cleaned/ground/' + TargetImg[i])

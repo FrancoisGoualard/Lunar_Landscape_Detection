@@ -26,7 +26,7 @@ def create_dataset():
 
     # else we run the function
     data_augmentation()
-    shutil.rmtree(path_dataset)
+    shutil.rmtree(path_dataset, ignore_errors=True)
     os.mkdir(path_dataset)
     os.mkdir(path_dataset_render)
     os.mkdir(path_dataset_ground)
