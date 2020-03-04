@@ -37,22 +37,22 @@ def create_dataset():
         path_target = os.path.join(path_dataset_render, f)
         shutil.copyfile(path_origin, path_target)
 
-    for f in tqdm.tqdm([f for f in os.listdir(path_data_ground) if os.path.isfile(os.path.join(path_data_ground, f))]):
+    for f in tqdm.tqdm(os.listdir(path_data_ground)):
         path_origin = os.path.join(path_data_ground, f)
         path_target = os.path.join(path_dataset_ground, f)
         shutil.copyfile(path_origin, path_target)
 
-    for f in tqdm.tqdm([f for f in os.listdir(path_data_augmentation_ground) if os.path.isfile(os.path.join(path_data_augmentation_ground, f))]):
+    for f in tqdm.tqdm(os.listdir(path_data_augmentation_ground)):
         path_origin = os.path.join(path_data_augmentation_ground, f)
         path_target = os.path.join(path_dataset_ground, f)
         os.rename(path_origin, path_target)
 
-    for f in tqdm.tqdm([f for f in os.listdir(path_data_augmentation_render) if os.path.isfile(os.path.join(path_data_augmentation_render, f))]):
+    for f in tqdm.tqdm(os.listdir(path_data_augmentation_render)):
         path_origin = os.path.join(path_data_augmentation_render, f)
         path_target = os.path.join(path_dataset_render, f)
         os.rename(path_origin, path_target)
     else:
-        print("dataset already created")
+        print("Dataset already created")
 
 
 if __name__ == "__main__":

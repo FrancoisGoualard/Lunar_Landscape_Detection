@@ -20,4 +20,4 @@ module load cuda/9.0
 
 source activate lunarenv
 
-python content 
+python .

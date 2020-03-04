@@ -17,11 +17,10 @@ from content.create_dataset import create_dataset
 from config import DATAPATH, KERASPATH, OUTPUT, GPU, NB_EPOCH, SOURCEIMG, TARGETIMG
 
 
-def treat_img(img_path):
-    img = cv.imread(img_path)
-    img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
-    img = cv.resize(img, (500, 500))
-    return img
+def treat_img(img):
+    out = cv.cvtColor(img, cv.COLOR_BGR2RGB)
+    out = cv.resize(out, (500, 500))
+    return out
 
 
 def scan_existing_folders(folder_path):
@@ -70,12 +69,14 @@ def parsing():
 
 
 def load_images():
-    SourceImg = sorted(os.listdir(DATAPATH + 'images_cleaned/render'))
-    TargetImg = sorted(os.listdir(DATAPATH + 'images_cleaned/ground'))
-    for i in tqdm.tqdm(len(SourceImg)):
-        img_1 = cv.imread(DATAPATH + 'images_cleaned/render/' + SourceImg[i])
+    SourceImg = sorted(os.listdir(DATAPATH + 'images/render'))
+    TargetImg = sorted(os.listdir(DATAPATH + 'images/ground'))
+    for i in tqdm.tqdm(range(len(SourceImg))):
+        img_1 = cv.imread(DATAPATH + 'images/render/' + SourceImg[i])
+        img_1 = treat_img(img_1)
         img_1 = img_1.reshape(1, 500, 500, 3)
-        img_2 = cv.imread(DATAPATH + 'images_cleaned/ground/' + TargetImg[i])
+        img_2 = cv.imread(DATAPATH + 'images/ground/' + TargetImg[i])
+        img_2 = treat_img(img_2)
         img_2 = img_2.reshape(1, 500, 500, 3)
         yield img_1, img_2
 
@@ -95,17 +96,17 @@ def main_process():
     """Train transfer learning model with given hyperparameters and test against a given image."""
 
     # should be called if we want to activate data augmentation
-    try:
-        create_dataset()
-    except AssertionError as e:
-        print(repr(e))
-    parsing()
+    # try:
+    #     create_dataset()
+    # except AssertionError as e:
+    #     print(repr(e))
+    # parsing()
     input_shape = (500, 500, 3)
 
     VGG16_weight = f"{KERASPATH}vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5"
     VGG16_ = VGG16(include_top=False, weights=VGG16_weight, input_shape=input_shape)
     model_ = ModelEnhancer(VGG16_)
-    plot_layers(model_)
+    # plot_layers(model_)
 
     model_.compile(optimizer=Adam(lr=1e-4), loss='binary_crossentropy', metrics=['accuracy'])
     checkpointer = ModelCheckpoint(f'{OUTPUT}model_TL_UNET.h5', verbose=1, mode='auto', monitor='loss',
