@@ -77,33 +77,32 @@ def load_images():
     rotateinv = imgaug.augmenters.Affine(rotate=-3)
     flip_hr = imgaug.augmenters.Fliplr(p=1.0)
 
-    for i in tqdm.tqdm(range(10)):
-        img_1 = treat_img(DATAPATH + 'images/render/' + SourceImg[i])
-        img_rot1 = rotate3.augment_image(img_1)
-        img_2 = treat_img(DATAPATH + 'images/ground/' + TargetImg[i])
-        img_rot2 = rotate3.augment_image(img_2)
-        img_rot1 = img_rot1.reshape(1, 500, 500, 3)
-        img_1 = img_1.reshape(1, 500, 500, 3)
-        img_2 = img_2.reshape(1, 500, 500, 3)
-        img_rot2 = img_rot2.reshape(1, 500, 500, 3)
-        yield img_rot1, img_rot2
-        yield img_1, img_2
-    # yield load_augmented_images(rotate3)
-    # yield load_augmented_images(rotateinv)
-    # yield load_augmented_images(flip_hr)
-
-
-def load_augmented_images(change):
-    SourceImg = sorted(os.listdir(DATAPATH + 'images/render'))
-    TargetImg = sorted(os.listdir(DATAPATH + 'images/ground'))
     for i in tqdm.tqdm(range(len(SourceImg))):
         img_1 = treat_img(DATAPATH + 'images/render/' + SourceImg[i])
-        img_1 = change.augment_image(img_1)
-        img_1 = img_1.reshape(1, 500, 500, 3)
+        img_rot1 = rotate3.augment_image(img_1)
+        img_rotinv1 = rotateinv.augment_image(img_1)
+        img_rotflip1 = flip_hr.augment_image(img_1)
+
         img_2 = treat_img(DATAPATH + 'images/ground/' + TargetImg[i])
-        img_2 = change.augment_image(img_2)
+        img_rot2 = rotate3.augment_image(img_2)
+        img_rotinv2 = rotateinv.augment_image(img_2)
+        img_rotflip2 = flip_hr.augment_image(img_2)
+
+
+        img_1 = img_1.reshape(1, 500, 500, 3)
+        img_rot1 = img_rot1.reshape(1, 500, 500, 3)
+        img_rotinv1 = img_rotinv1.reshape(1, 500, 500, 3)
+        img_rotflip1 = img_rotflip1.reshape(1, 500, 500, 3)
         img_2 = img_2.reshape(1, 500, 500, 3)
+        img_rot2 = img_rot2.reshape(1, 500, 500, 3)
+        img_rotinv2 = img_rotinv2.reshape(1, 500, 500, 3)
+        img_rotflip2 = img_rotflip2.reshape(1, 500, 500, 3)
+
         yield img_1, img_2
+        yield img_rot1, img_rot2
+        yield img_rotinv1, img_rotinv2
+        yield img_rotflip1, img_rotflip2
+
 
 def plot_layers(Model_):
     """
@@ -135,17 +134,6 @@ def main_process():
     model_.compile(optimizer=Adam(lr=1e-4), loss='binary_crossentropy', metrics=['accuracy'])
     checkpointer = ModelCheckpoint(f'{OUTPUT}model_TL_aug.h5', verbose=1, mode='auto', monitor='loss',
                                    save_best_only=True)
-    rotate3 = imgaug.augmenters.Affine(rotate=3)
-    rotateinv = imgaug.augmenters.Affine(rotate=-3)
-    flip_hr = imgaug.augmenters.Fliplr(p=1.0)
 
-    # model_.fit(load_augmented_images(rotate3), epochs=NB_EPOCH, verbose=1, callbacks=[checkpointer],
-    #            steps_per_epoch=5, shuffle=True)
-    # model_.fit(load_augmented_images(rotateinv), epochs=NB_EPOCH, verbose=1, callbacks=[checkpointer],
-    #            steps_per_epoch=5, shuffle=True)
-    # model_.fit(load_augmented_images(flip_hr), epochs=NB_EPOCH, verbose=1, callbacks=[checkpointer],
-    #            steps_per_epoch=5, shuffle=True)
     model_.fit(load_images(), epochs=NB_EPOCH, verbose=1, callbacks=[checkpointer],
                steps_per_epoch=5, shuffle=True)
-
-
