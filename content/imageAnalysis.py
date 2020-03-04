@@ -22,7 +22,6 @@ def treat_img(img_path):
     img = cv.imread(img_path)
     img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
     img = cv.resize(img, (500, 500))
-    img = img.reshape(1, 500, 500, 3)
     return img
 
 
@@ -86,8 +85,10 @@ def load_augmented_images(change):
     for i in tqdm.tqdm(range(len(SourceImg))):
         img_1 = treat_img(DATAPATH + 'images/render/' + SourceImg[i])
         img_1 = change.augment_image(img_1)
+        img_1 = img_1.reshape(1, 500, 500, 3)
         img_2 = treat_img(DATAPATH + 'images/ground/' + TargetImg[i])
         img_2 = change.augment_image(img_2)
+        img_2 = img_2.reshape(1, 500, 500, 3)
         yield img_1, img_2
 
 def plot_layers(Model_):
@@ -110,8 +111,8 @@ def main_process():
     # except AssertionError as e:
     #     print(repr(e))
     # parsing()
-    # input_shape = (500, 500, 3)
-    #
+    input_shape = (500, 500, 3)
+
     VGG16_weight = f"{KERASPATH}vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5"
     VGG16_ = VGG16(include_top=False, weights=VGG16_weight, input_shape=input_shape)
     model_ = ModelEnhancer(VGG16_)
@@ -124,11 +125,11 @@ def main_process():
     rotateinv = imgaug.augmenters.Affine(rotate=-3)
     flip_hr = imgaug.augmenters.Fliplr(p=1.0)
 
-    model_.fit(load_images(rotate3), epochs=NB_EPOCH, verbose=1, callbacks=[checkpointer],
+    model_.fit(load_augmented_images(rotate3), epochs=NB_EPOCH, verbose=1, callbacks=[checkpointer],
                steps_per_epoch=5, shuffle=True)
-    model_.fit(load_images(rotateinv), epochs=NB_EPOCH, verbose=1, callbacks=[checkpointer],
+    model_.fit(load_augmented_images(rotateinv), epochs=NB_EPOCH, verbose=1, callbacks=[checkpointer],
                steps_per_epoch=5, shuffle=True)
-    model_.fit(load_images(flip_hr), epochs=NB_EPOCH, verbose=1, callbacks=[checkpointer],
+    model_.fit(load_augmented_images(flip_hr), epochs=NB_EPOCH, verbose=1, callbacks=[checkpointer],
                steps_per_epoch=5, shuffle=True)
     model_.fit(load_images(), epochs=NB_EPOCH, verbose=1, callbacks=[checkpointer],
                steps_per_epoch=5, shuffle=True)
