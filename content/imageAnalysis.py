@@ -77,11 +77,20 @@ def load_images():
     rotateinv = imgaug.augmenters.Affine(rotate=-3)
     flip_hr = imgaug.augmenters.Fliplr(p=1.0)
 
-    for i in tqdm.tqdm(range(len(SourceImg))):
+    for i in tqdm.tqdm(range(10)):
         img_1 = treat_img(DATAPATH + 'images/render/' + SourceImg[i])
+        img_rot1 = rotate3.augment_image(img_1)
         img_2 = treat_img(DATAPATH + 'images/ground/' + TargetImg[i])
+        img_rot2 = rotate3.augment_image(img_2)
+        img_rot1 = img_rot1.reshape(1, 500, 500, 3)
+        img_1 = img_1.reshape(1, 500, 500, 3)
+        img_2 = img_2.reshape(1, 500, 500, 3)
+        img_rot2 = img_rot2.reshape(1, 500, 500, 3)
+        yield img_rot1, img_rot2
         yield img_1, img_2
-    load_augmented_images(rotate3)
+    # yield load_augmented_images(rotate3)
+    # yield load_augmented_images(rotateinv)
+    # yield load_augmented_images(flip_hr)
 
 
 def load_augmented_images(change):
@@ -130,13 +139,13 @@ def main_process():
     rotateinv = imgaug.augmenters.Affine(rotate=-3)
     flip_hr = imgaug.augmenters.Fliplr(p=1.0)
 
-    model_.fit(load_augmented_images(rotate3), epochs=NB_EPOCH, verbose=1, callbacks=[checkpointer],
-               steps_per_epoch=5, shuffle=True)
+    # model_.fit(load_augmented_images(rotate3), epochs=NB_EPOCH, verbose=1, callbacks=[checkpointer],
+    #            steps_per_epoch=5, shuffle=True)
     # model_.fit(load_augmented_images(rotateinv), epochs=NB_EPOCH, verbose=1, callbacks=[checkpointer],
     #            steps_per_epoch=5, shuffle=True)
     # model_.fit(load_augmented_images(flip_hr), epochs=NB_EPOCH, verbose=1, callbacks=[checkpointer],
     #            steps_per_epoch=5, shuffle=True)
-    # model_.fit(load_images(), epochs=NB_EPOCH, verbose=1, callbacks=[checkpointer],
-    #            steps_per_epoch=5, shuffle=True)
+    model_.fit(load_images(), epochs=NB_EPOCH, verbose=1, callbacks=[checkpointer],
+               steps_per_epoch=5, shuffle=True)
 
 
