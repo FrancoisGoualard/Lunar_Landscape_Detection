@@ -118,7 +118,7 @@ def main_process():
     plot_layers(model_)
 
     model_.compile(optimizer=Adam(lr=1e-4), loss='binary_crossentropy', metrics=['accuracy'])
-    checkpointer = ModelCheckpoint(f'{OUTPUT}model_TL_UNET.h5', verbose=1, mode='auto', monitor='loss',
+    checkpointer = ModelCheckpoint(f'{OUTPUT}model_TL_aug.h5', verbose=1, mode='auto', monitor='loss',
                                    save_best_only=True)
     rotate3 = imgaug.augmenters.Affine(rotate=3)
     rotateinv = imgaug.augmenters.Affine(rotate=-3)

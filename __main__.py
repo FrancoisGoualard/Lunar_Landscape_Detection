@@ -22,9 +22,9 @@ def main():
     elif len(sys.argv) == 3:
         if sys.argv[1] == "test":
             try:
-                transferLearningModel = load_model(f'{OUTPUT}model_TL_UNET.h5')
+                transferLearningModel = load_model(f'{OUTPUT}model_TL_aug.h5')
             except ImportError:
-                print(f"Error : please generate the weights first. {OUTPUT}model_TL_UNET.h5 not found")
+                print(f"Error : please generate the weights first. {OUTPUT}model_TL_aug.h5 not found")
             else:
                 prediction_test(transferLearningModel, sys.argv[2])
 
