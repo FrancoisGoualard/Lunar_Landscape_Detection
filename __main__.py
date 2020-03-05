@@ -19,15 +19,10 @@ def main():
             Displayer().run_without_image()
         else:
             return 0
-    elif len(sys.argv) == 3:
+    elif len(sys.argv) > 2:
         if sys.argv[1] == "test":
-            try:
-                transferLearningModel = load_model(f'{OUTPUT}model_TL_aug.h5')
-            except ImportError:
-                print(f"Error : please generate the weights first. {OUTPUT}model_TL_aug.h5 not found")
-            else:
-                prediction_test(transferLearningModel, sys.argv[2])
+            prediction_test(sys.argv[2])
 
 
 if __name__ == "__main__":
-    main()
+   main()
