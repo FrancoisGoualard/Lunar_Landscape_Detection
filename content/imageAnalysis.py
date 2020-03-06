@@ -2,7 +2,6 @@ import os
 import cv2 as cv
 import tqdm
 import imgaug
-
 from tensorflow.keras.utils import plot_model
 from IPython.display import Image
 
@@ -12,7 +11,7 @@ from tensorflow.keras.applications import VGG16
 
 from content.modelEnhancer import ModelEnhancer
 
-from config import DATAPATH, KERASPATH, OUTPUT, GPU, NB_EPOCH, SOURCEIMG, TARGETIMG
+from config import DATAPATH, KERASPATH, OUTPUT,  NB_EPOCH
 
 
 def treat_img(img_path):
