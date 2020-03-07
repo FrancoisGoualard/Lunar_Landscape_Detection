@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import cv2 as cv
 import os
-import imgaug
+import sys
 
 from config import DATAPATH, OUTPUT
 from tensorflow.keras.models import load_model
@@ -52,6 +52,7 @@ def prediction_test(im_number):
          transferLearningModel1 = load_model(f'{OUTPUT}model_TL_UNET.h5')
          transferLearningModel2 = load_model(f'{OUTPUT}model_TL_aug.h5')
          transferLearningModel3 = load_model(f'{OUTPUT}model_TL_aug_150.h5')
+         transferLearningModel4 = load_model(f'{OUTPUT}model_TL_aug_300.h5')
 
     except ImportError:
         print(f"Error : please generate the weights first. {OUTPUT} + {sys.argv[i]} not found")
@@ -66,24 +67,27 @@ def prediction_test(im_number):
     sourceImg = sorted(os.listdir(DATAPATH + 'images/render'))
     targetImg = sorted(os.listdir(DATAPATH + 'images/ground'))
 
-    img_x = cv.imread(DATAPATH + "images/render/" + sourceImg[int(im_number) - 1])
-    display(img_x, f"Actual image, number {im_number}", 1)
-
     img_x = cv.imread(DATAPATH + "images/ground/" + targetImg[int(im_number) - 1])
     display(img_x, "Expected segmentation", 2)
+
+    img_x = cv.imread(DATAPATH + "images/render/" + sourceImg[int(im_number) - 1])
+    display(img_x, f"Actual image, number {im_number}", 1)
 
     img_x = cv.cvtColor(img_x, cv.COLOR_BGR2RGB)
     img_x = cv.resize(img_x, (500, 500))
     img_x = img_x.reshape(1, 500, 500, 3)
 
     prediction = transferLearningModel1.predict(img_x)
-    display(prediction, "Predicted segmentation", 3)
+    display(prediction, "Predicted segmentation Epoch = 300", 3)
 
-    prediction = transferLearningModel2.predict(img_x)
-    display(prediction, "Predicted segmentation with Data augmentation Epoch=2", 4)
+    prediction1 = transferLearningModel2.predict(img_x)
+    display(prediction1, "Predicted segmentation with Data augmentation Epoch=2", 4)
 
-    prediction = transferLearningModel3.predict(img_x)
-    display(prediction, "Predicted segmentation with Data augmentation Epoch=150", 5)
+    prediction2 = transferLearningModel3.predict(img_x)
+    display(prediction2, "Predicted segmentation with Data augmentation Epoch=150", 5)
+
+    prediction3 = transferLearningModel4.predict(img_x)
+    display(prediction3, "Predicted segmentation with Data augmentation Epoch=300", 6)
 
     plt.show()
 
